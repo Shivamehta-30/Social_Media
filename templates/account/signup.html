@@ -1,0 +1,44 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% load crispy_forms_filters %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>{% trans "Sign Up" %}</h1>
+
+    <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+</div>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <h4>Password must contain the following:</h4>
+        <ui>
+            <li>
+                one lowercase letter
+            </li>
+            <li>
+                one capital uppercase letter
+            </li>
+            <li>
+                one number
+            </li>
+            <li>
+                Minimum 8 characters
+            </li>
+        </ui>
+        <div class="d-grid mt-3">
+            <button class="btn btn-dark" type="submit">{% trans "Sign Up" %}</button>
+        </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
