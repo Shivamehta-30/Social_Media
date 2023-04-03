@@ -77,3 +77,11 @@ def Dashboard(request):
     print("Dashboard view called")
     videos = Video.objects.all()
     return render(request, 'Dashboard.html', {'videos': videos})
+
+
+def like_post(request):
+    post_id = request.POST.get('post_id')
+    post = get_object_or_404(Video, id=post_id)
+    post.likes += 1
+    post.save()
+    return JsonResponse({'success': True})

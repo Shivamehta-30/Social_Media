@@ -19,7 +19,8 @@
                     <p class="card-text">{{ video.comments.count }} comments</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Like</button>
+                            <button type="button" data-post-id="{{ video.id }}" id="like-button"
+                                class="btn btn-sm btn-outline-secondary">Like</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary">Comment</button>
                         </div>
                     </div>
@@ -30,3 +31,23 @@
     </div>
 </div>
 {% endblock %}
+<script>
+    $(document).ready(function () {
+        $('#like-button').click(function () {
+            var postId = $(this).data('post-id');
+            $.ajax({
+                url: '{% url "like_post" %}',
+                method: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'post_id': postId
+                },
+                success: function (data) {
+                    if (data.success) {
+                        alert('Post liked!');
+                    }
+                }
+            });
+        });
+    });
+</script>
