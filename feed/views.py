@@ -79,6 +79,7 @@ def Dashboard(request):
     return render(request, 'Dashboard.html', {'videos': videos})
 
 
+
 def like_post(request):
     post_id = request.POST.get('post_id')
     post = get_object_or_404(Video, id=post_id)
