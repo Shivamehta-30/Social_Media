@@ -28,9 +28,9 @@ class VideoDetailView(DetailView):
 
 class VideoCreateView(CreateView):
     model = Video
-    template_name = 'video_form.html'
+    template_name = 'feed/video_form.html'
     fields = ['title', 'video']
-    success_url = reverse_lazy('video_list')
+    success_url = reverse_lazy('view')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -42,7 +42,7 @@ class VideoUpdateView(UpdateView):
     model = Video
     template_name = 'video_form.html'
     fields = ['title', 'video']
-    success_url = reverse_lazy('video_list')
+    success_url = reverse_lazy('VideoListView')
 
     def form_valid(self, form):
         messages.success(self.request, 'Video updated successfully!')
