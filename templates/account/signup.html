@@ -56,7 +56,7 @@
     $(document).ready(function () {
         $('#signup_form').submit(function (event) {
             var password = $('#id_password1').val();
-            var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+            var pattern = /^(?=.[a-z])(?=.[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
             if (!pattern.test(password)) {
                 event.preventDefault();

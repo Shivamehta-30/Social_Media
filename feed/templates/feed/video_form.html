@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% extends 'account/base.html' %}
 
 {% block content %}
@@ -26,16 +25,3 @@
     </div>
   </div>
 {% endblock %}
-=======
-{% extends 'base.html' %}
-
-{% block content %}
-<h1>{% if form.instance.pk %}Update{% else %}Upload{% endif %} Video</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Update{% else %}Upload{% endif %}
-        Video</button>
-</form>
-{% endblock %}
->>>>>>> ab43179d12665a36635327dc10f549fe125cd3e2
