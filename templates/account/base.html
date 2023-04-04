@@ -1,46 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{% block head_title %}{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-     <style>
-      .form-group {
-        margin-top: 10px;
-      }
-    </style>
-    {% block extra_head %}
-    {% endblock %}
+
+<head>
+  <title>{% block head_title %}{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .form-group {
+      margin-top: 10px;
+    }
+  </style>
+  {% block extra_head %}
+  {% endblock %}
   </head>
-  <body>
-    {% block body %}
 
-    {% if messages %}
-      <div class="p-2">
-        {% for message in messages %}
-          <div class="text-center border-bottom">{{message}}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
+<body>
+  {% block body %}
 
-    <div class="p-3 mb-3 bg-dark">
-      <div class="container d-flex justify-content-between">
+  {% if messages %}
+  <div class="p-2">
+    {% for message in messages %}
+    <div class="text-center border-bottom">{{message}}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'view' %}">Video Sharing Application</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
-          <div><a class="text-light" href="{% url 'account_email' %}">Change E-mail</a></div>
-          <div><a class="text-light" href="{% url 'view' %}">Home</a></div>
-          <div><a class="text-light" href="{% url 'account_logout' %}">Sign Out</a></div>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_email' %}">Change E-mail</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
+          </li>
           {% else %}
-          <div><a class="text-light" href="{% url 'account_login' %}">Sign In</a></div>
-          <div><a class="text-light" href="{% url 'account_signup' %}">Sign Up</a></div>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_login' %}">Sign In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+          </li>
           {% endif %}
+        </ul>
       </div>
     </div>
-    {% block content %}
-    {% endblock %}
-    {% endblock %}
-    {% block extra_body %}
-    {% endblock %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+  {% endblock %}
+  {% block extra_body %}
+  {% endblock %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
   </body>
+
 </html>
