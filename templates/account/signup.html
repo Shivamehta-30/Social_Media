@@ -53,20 +53,36 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#signup_form').submit(function (event) {
-            var password = $('#id_password1').val();
-            var pattern = /^(?=.[a-z])(?=.[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var lowercaseRegex = /[a-z]/;
+            var uppercaseRegex = /[A-Z]/;
+            var numberRegex = /[0-9]/;
 
-            if (!pattern.test(password)) {
-                event.preventDefault();
-                $('#password1_error').html('Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.');
-            } else {
-                $('#password1_error').html('');
+            if (password.length < 8) {
+                alert("Password must be at least 8 characters long.");
+                return false;
             }
-        });
-    });
+
+            if (!lowercaseRegex.test(password)) {
+                alert("Password must contain at least one lowercase letter.");
+                return false;
+            }
+
+            if (!uppercaseRegex.test(password)) {
+                alert("Password must contain at least one uppercase letter.");
+                return false;
+            }
+
+            if (!numberRegex.test(password)) {
+                alert("Password must contain at least one number.");
+                return false;
+            }
+
+        return true;
+    }
 </script>
+
 {% endblock %}
 
 {% block content %}
