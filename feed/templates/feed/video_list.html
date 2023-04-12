@@ -6,108 +6,91 @@
 <div class="container">
     <div class="row">
         {% for video in videos %}
-    <div class="col-md-4">
-        <div class="card mb-4 box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">{{ video.title }}</h5>
-                <p class="card-text">{{ video.user.username }}</p>
-                <video width="100%" controls>
-                    <source src="{{ video.video.url }}" type="video/mp4">
-                    Your browser does not support HTML5 video.
-                </video>
-                <p class="card-text">{{ video.likes }} likes</p>
-                <p class="card-text">{{ video.comments.count }} comments</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                        <button type="button" id="like-button" data-post-id="{{ video.id }}"
-                            class="btn btn-sm btn-outline-secondary">Like</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#commentModal{{ video.id }}">Comment</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="commentModalLabel">Write a Comment</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="POST" action="{% url 'add_comment' pk=video.id %}">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="comment">Comment:</label>
-                            <textarea class="form-control" id="comment{{ video.id }}" name="comment" rows="3"></textarea>
+        <div class="col-md-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                    <p class="card-text">{{ video.user.username }}</p>
+                    <video width="100%" controls>
+                        <source src="{{ video.video.url }}" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                    <p class="card-text">
+                        <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
+                    </p>
+                    <p class="card-text">{{ video.comments.count }} comments</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" id="like-button" data-video-id="{{ video.id }}"
+                                class="btn btn-sm btn-outline-secondary like-button">Like</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+                                data-target="#commentModal{{ video.id }}">Comment</button>
                         </div>
-                        <input type="hidden" id="video-id" name="video-id" value="{{ video.id }}">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
+        <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog"
+            aria-labelledby="commentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="commentModalLabel">Write a Comment</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="{% url 'add_comment' pk=video.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="comment">Comment:</label>
+                                <textarea class="form-control" id="comment{{ video.id }}" name="comment"
+                                    rows="3"></textarea>
+                            </div>
+                            <input type="hidden" id="video-id" name="video-id" value="{{ video.id }}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
 
     </div>
 </div>
 
 
 <script>
-$(document).ready(function() {
-    $('.like-button').click(function() {
-        var button = $(this);
-        var videoId = button.data('video-id');
-        $.ajax({
-            type: 'POST',
-            url: '{% url "like_video" %}',
-            data: {
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
-                'video_id': videoId
-            },
-            success: function(data) {
-                // Update the like count on the page
-                var countSpan = $('#like-count-' + videoId);
-                countSpan.text(parseInt(countSpan.text()) + 1);
-                // Disable the like button to prevent multiple clicks
-                button.prop('disabled', true);
-            },
-            error: function(xhr, status, error) {
-                // Handle the error response here
-                console.error(xhr);
-            }
+        $(document).ready(function () {
+            $('.like-button').click(function () {
+                var button = $(this);
+                var videoId = button.data('video-id');
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "like_video" %}',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'video_id': videoId
+                    },
+                success: function (data) {
+                  
+                    button.toggleClass('btn-outline-secondary btn-danger');
+                  
+                    var countSpan = $('#like-count-' + videoId);
+                    countSpan.text(parseInt(countSpan.text()) + 1);
+                  
+                    button.prop('disabled', true);
+                },
+                error: function (xhr, status, error) {
+                    // Handle the error response here
+                    console.error(xhr);
+                }
+            });
         });
     });
-});
 </script>
-
-
-{#<script>#}
-{#    $(document).ready(function() {#}
-{#      $('#like-button').click(function() {#}
-{#        var postId = $(this).data('post-id');#}
-{#        debugger#}
-{#        $.ajax({#}
-{#          url: '{% url "like_post" %}',#}
-{#          method: 'POST',#}
-{#          data: {#}
-{#            'csrfmiddlewaretoken': '{{ csrf_token }}',#}
-{#            'post_id': postId#}
-{#          },#}
-{#          success: function(data) {#}
-{#            if (data.success) {#}
-{#              alert('Post liked!');#}
-{#            }#}
-{#          }#}
-{#        });#}
-{#      });#}
-{#    });#}
-{#</script>#}
-
 {% endblock %}
