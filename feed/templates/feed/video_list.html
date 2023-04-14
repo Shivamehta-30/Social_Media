@@ -1,4 +1,6 @@
 {% extends 'account/base.html' %}
+{% load custom_filters %}
+
 
 {% block content %}
 
@@ -32,7 +34,7 @@
         </div>
         <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog"
             aria-labelledby="commentModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="commentModalLabel">Write a Comment</h5>
@@ -41,6 +43,13 @@
                         </button>
                     </div>
                     <form method="POST" action="{% url 'add_comment' pk=video.id %}">
+                        {% for comment in comments|get_item:video.id %}
+                            <div class="comment">
+                                <p>{{ comment.comment }}</p>
+                                <p class="meta">Posted by {{ comment.user.username }} on {{ comment.created_at }}</p>
+                            </div>
+                        {% endfor %}
+
                         {% csrf_token %}
                         <div class="modal-body">
                             <div class="form-group">
@@ -93,4 +102,24 @@
         });
     });
 </script>
+    <style>
+    .comments-section {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .comment {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .meta {
+        font-size: 0.8rem;
+        color: #999;
+    }
+
+</style>
 {% endblock %}

@@ -49,7 +49,9 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'crispy_bootstrap4',
-    'feed'
+    'feed',
+
+    'feed.templatetags'
 ]
 
 MIDDLEWARE = [

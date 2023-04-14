@@ -9,10 +9,25 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 class VideoListView(LoginRequiredMixin, ListView):
+    DetailView
+
+
+class VideoListView(LoginRequiredMixin, ListView):
     model = Video
     template_name = 'video_list.html'
     context_object_name = 'videos'
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        comments = Comment.objects.order_by('-created_at')
+        context['comments'] = {}
+        for comment in comments:
+            video_id = comment.video.id
+            if video_id not in context['comments']:
+                context['comments'][video_id] = []
+            context['comments'][video_id].append(comment)
+        return context
 
 
 class VideoDetailView(LoginRequiredMixin, DetailView):
@@ -25,6 +40,7 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
         comments = Comment.objects.filter(
             video=self.object).order_by('-created_at')
         context['comments'] = comments
+        print(context)
         return context
 
 
