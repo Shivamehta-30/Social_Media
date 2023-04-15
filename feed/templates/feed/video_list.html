@@ -72,30 +72,34 @@
     </div>
 </div>
 
-
 <script>
-        $(document).ready(function () {
-            $('.like-button').click(function () {
-                var button = $(this);
-                var videoId = button.data('video-id');
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "like_video" %}',
-                    data: {
-                        'csrfmiddlewaretoken': '{{ csrf_token }}',
-                        'video_id': videoId
-                    },
+    $(document).ready(function () {
+        $('.like-button').each(function () {
+            var videoId = $(this).data('video-id');
+            if (localStorage.getItem('liked_' + videoId) === 'true') {
+                $(this).prop('disabled', true);
+                $(this).removeClass('btn-outline-secondary').addClass('btn-danger');
+            }
+        });
+
+        $('.like-button').click(function () {
+            var button = $(this);
+            var videoId = button.data('video-id');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "like_video" %}',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'video_id': videoId
+                },
                 success: function (data) {
-                  
                     button.toggleClass('btn-outline-secondary btn-danger');
-                  
                     var countSpan = $('#like-count-' + videoId);
                     countSpan.text(parseInt(countSpan.text()) + 1);
-                  
                     button.prop('disabled', true);
+                    localStorage.setItem('liked_' + videoId, 'true');
                 },
                 error: function (xhr, status, error) {
-                    // Handle the error response here
                     console.error(xhr);
                 }
             });
