@@ -10,3 +10,4 @@ class CommentAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Video)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(Video_Likes)

@@ -3,7 +3,12 @@
 
 
 {% block content %}
-
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
 <br>
 <div class="container">
     <div class="row">
@@ -20,6 +25,17 @@
                     <p class="card-text">
                         <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
                     </p>
+
+                    <button type="button" class="btn btn-link" data-toggle="popover" data-target="#description-popover" data-content="{{ video.videoDescription }}">
+                      Show Description
+                    </button>
+
+                    <div class="popover fade" role="tooltip" id="description-popover">
+                      <div class="arrow"></div>
+                      <h3 class="popover-header">Video Description</h3>
+                      <div class="popover-body"></div>
+                    </div>
+
                     <p class="card-text">{{ video.comments.count }} comments</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
@@ -46,7 +62,7 @@
                         {% for comment in comments|get_item:video.id %}
                             <div class="comment">
                                 <p>{{ comment.comment }}</p>
-                                <p class="meta">Posted by {{ comment.user.username }} on {{ comment.created_at }}</p>
+                                <p class="meta">Posted by {{ comment.user.username }}</p>
                             </div>
                         {% endfor %}
 
@@ -93,11 +109,14 @@
                     'video_id': videoId
                 },
                 success: function (data) {
-                    button.toggleClass('btn-outline-secondary btn-danger');
-                    var countSpan = $('#like-count-' + videoId);
-                    countSpan.text(parseInt(countSpan.text()) + 1);
-                    button.prop('disabled', true);
-                    localStorage.setItem('liked_' + videoId, 'true');
+                    console.log(data.status)
+                    if(data.status == 'success') {
+                        button.toggleClass('btn-outline-secondary btn-danger');
+                        var countSpan = $('#like-count-' + videoId);
+                        countSpan.text(parseInt(countSpan.text()) + 1);
+                        button.prop('disabled', true);
+                        localStorage.setItem('liked_' + videoId, 'true');
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr);
@@ -106,24 +125,32 @@
         });
     });
 </script>
-    <style>
-    .comments-section {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-    }
 
-    .comment {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
+<script>
+$('[data-toggle="popover"]').popover({
+  container: 'body',
+  html: true,
+  trigger: 'click'
+});
+</script>
 
-    .meta {
-        font-size: 0.8rem;
-        color: #999;
-    }
+<style>
+.comments-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
 
+.comment {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.meta {
+    font-size: 0.8rem;
+    color: #999;
+}
 </style>
 {% endblock %}

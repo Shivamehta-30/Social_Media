@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Video, Comment
+from .models import *
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
@@ -16,7 +16,7 @@ class VideoListView(LoginRequiredMixin, ListView):
     model = Video
     template_name = 'video_list.html'
     context_object_name = 'videos'
-    paginate_by = 10
+    # paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,7 +47,7 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
 class VideoCreateView(LoginRequiredMixin, CreateView):
     model = Video
     template_name = 'feed/video_form.html'
-    fields = ['title', 'video']
+    fields = ['title', 'video', 'videoDescription']
     success_url = reverse_lazy('view')
 
     def form_valid(self, form):
@@ -59,7 +59,7 @@ class VideoCreateView(LoginRequiredMixin, CreateView):
 class VideoUpdateView(LoginRequiredMixin, UpdateView):
     model = Video
     template_name = 'video_form.html'
-    fields = ['title', 'video']
+    fields = ['title', 'video', 'videoDescription']
     success_url = reverse_lazy('VideoListView')
 
     def form_valid(self, form):
@@ -98,14 +98,23 @@ def Dashboard(request):
 
 
 def like_video(request):
-    print("In like_post")
     if request.method == 'POST':
-        print("In If")
         video_id = request.POST.get('video_id')
+        a = Video_Likes.objects.filter(VideoId=video_id, LikeByUserId=request.user.id)
+        print(a)
+        if a.exists():
+            print("In like condition")
+            return JsonResponse({'status': 'error'})
+
+        my_like = Video_Likes()
+        my_like.VideoId = video_id
+        my_like.LikeByUserId = request.user.id
+
         post = Video.objects.get(id=video_id)
         print(post)
         post.likes += 1
         post.save()
+        my_like.save()
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})
