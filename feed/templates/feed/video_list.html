@@ -3,90 +3,153 @@
 
 
 {% block content %}
+
 <head>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <style>
+        .comments-section {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .comment {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .meta {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .video-container {
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        #searchInput {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+            outline: none;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        #searchBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #searchBtn:hover {
+            background-color: #3e8e41;
+        }
+    </style>
 </head>
 <br>
-<div class="container">
+<div class="d-flex justify-content-end">
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button type="button" id="searchBtn">Search</button>
+</div>
+
+<br>
+<div class="container" style="height: 100vh;">
     <div class="row">
         {% for video in videos %}
-        <div class="col-md-4">
-            <div class="card mb-4 box-shadow">
+        <div class="col-md-12 mb-4">
+            <div class="card box-shadow">
                 <div class="card-body">
-                    <h5 class="card-title">{{ video.title }}</h5>
-                    <p class="card-text">{{ video.user.username }}</p>
-                    <video width="100%" controls>
-                        <source src="{{ video.video.url }}" type="video/mp4">
-                        Your browser does not support HTML5 video.
-                    </video>
-                    <p class="card-text">
-                        <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
-                    </p>
-
-                    <button type="button" class="btn btn-link" data-toggle="popover" data-target="#description-popover" data-content="{{ video.videoDescription }}">
-                      Show Description
-                    </button>
-
-                    <div class="popover fade" role="tooltip" id="description-popover">
-                      <div class="arrow"></div>
-                      <h3 class="popover-header">Video Description</h3>
-                      <div class="popover-body"></div>
-                    </div>
-
-                    <p class="card-text">{{ video.comments.count }} comments</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <button type="button" id="like-button" data-video-id="{{ video.id }}"
-                                class="btn btn-sm btn-outline-secondary like-button">Like</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
-                                data-target="#commentModal{{ video.id }}">Comment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog"
-            aria-labelledby="commentModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lm" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="commentModalLabel">Write a Comment</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form method="POST" action="{% url 'add_comment' pk=video.id %}">
-                        {% for comment in comments|get_item:video.id %}
-                            <div class="comment">
-                                <p>{{ comment.comment }}</p>
-                                <p class="meta">Posted by {{ comment.user.username }}</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <h5 class="card-title">{{ video.title }}</h5>
+                            <p class="card-text">{{ video.user.username }}</p>
+                            <video width="100%" controls>
+                                <source src="{{ video.video.url }}" type="video/mp4">
+                                Your browser does not support HTML5 video.
+                            </video>
+                            <p class="card-text">
+                                <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
+                            </p>
+                            <button type="button" class="btn btn-link" data-toggle="popover"
+                                data-target="#description-popover-{{ video.id }}"
+                                data-content="{{ video.videoDescription }}">
+                                Show Description
+                            </button>
+                            <div class="popover fade" role="tooltip" id="description-popover-{{ video.id }}">
+                                <div class="arrow"></div>
+                                <h3 class="popover-header">Video Description</h3>
+                                <div class="popover-body"></div>
                             </div>
-                        {% endfor %}
-
-                        {% csrf_token %}
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="comment">Comment:</label>
-                                <textarea class="form-control" id="comment{{ video.id }}" name="comment"
-                                    rows="3"></textarea>
+                            <p class="card-text">{{ video.comments.count }} comments</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <button type="button" id="like-button" data-video-id="{{ video.id }}"
+                                        class="btn btn-sm btn-outline-secondary like-button">Like</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+                                        data-target="#commentModal{{ video.id }}">Comment</button>
+                                </div>
                             </div>
-                            <input type="hidden" id="video-id" name="video-id" value="{{ video.id }}">
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                        <div class="col-md-6">
+                            <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog"
+                                aria-labelledby="commentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lm" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="commentModalLabel">Write a Comment</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form method="POST" action="{% url 'add_comment' pk=video.id %}">
+                                            {% for comment in comments|get_item:video.id %}
+                                            <div class="comment">
+                                                <p>{{ comment.comment }}</p>
+                                                <p class="meta">Posted by {{ comment.user.username }}</p>
+                                            </div>
+                                            {% endfor %}
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="comment">Comment:</label>
+                                                    <textarea class="form-control" id="comment{{ video.id }}"
+                                                        name="comment" rows="3"></textarea>
+                                                </div>
+                                                <input type="hidden" id="video-id" name="video-id"
+                                                    value="{{ video.id }}">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
-
     </div>
 </div>
+
 
 <script>
     $(document).ready(function () {
@@ -110,7 +173,7 @@
                 },
                 success: function (data) {
                     console.log(data.status)
-                    if(data.status == 'success') {
+                    if (data.status == 'success') {
                         button.toggleClass('btn-outline-secondary btn-danger');
                         var countSpan = $('#like-count-' + videoId);
                         countSpan.text(parseInt(countSpan.text()) + 1);
@@ -126,31 +189,40 @@
     });
 </script>
 
+
 <script>
-$('[data-toggle="popover"]').popover({
-  container: 'body',
-  html: true,
-  trigger: 'click'
-});
+    $('[data-toggle="popover"]').popover({
+        container: 'body',
+        html: true,
+        trigger: 'click'
+    });
 </script>
 
-<style>
-.comments-section {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-}
+<script>
+    $(document).ready(function () {
+        // code for checking if video is already liked goes here
 
-.comment {
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        // handle search button click event
+        $('#searchBtn').click(function () {
+            var searchKeyword = $('#searchInput').val().toLowerCase();
+            $('.card').each(function () {
+                var title = $(this).find('.card-title').text().toLowerCase();
+                if (title.indexOf(searchKeyword) !== -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
 
-.meta {
-    font-size: 0.8rem;
-    color: #999;
-}
-</style>
+        // handle search input keypress event
+        $('#searchInput').keypress(function (e) {
+            if (e.which == 13) { // enter key pressed
+                $('#searchBtn').click();
+            }
+        });
+    });
+
+</script>
+
 {% endblock %}
