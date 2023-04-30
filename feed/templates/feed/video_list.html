@@ -118,6 +118,7 @@
                             <p class="card-text">{{ video.comments.count }} comments</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
+                                    
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
                                         class="btn btn-sm btn-outline-secondary like-button">Like</button>
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
@@ -128,6 +129,7 @@
                                         class="btn btn-sm btn-outline-secondary like-button">Like</button> {% endcomment %}
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
                                         data-target="#commentModal{{ video.id }}">Comment</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Add to Playlist</button>
                                 </div>
                             </div>
                         </div>
