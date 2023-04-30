@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.db.models import Count
+
 
 
 class VideoListView(LoginRequiredMixin, ListView):
@@ -30,8 +32,13 @@ class VideoListView(LoginRequiredMixin, ListView):
             if video_id not in context['comments']:
                 context['comments'][video_id] = []
             context['comments'][video_id].append(comment)
-        return context
 
+        # get follower data
+        user = self.request.user
+        following_ids = Follower.objects.filter(follower=user).values_list('followed__id', flat=True)
+        context['following_ids'] = following_ids
+        context['inPlayList'] = True
+        return context
 
 class VideoDetailView(LoginRequiredMixin, DetailView):
     model = Video
@@ -45,7 +52,7 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
         context['comments'] = comments
         print(context)
         return context
-
+ 
 
 class VideoCreateView(LoginRequiredMixin, CreateView):
     model = Video
@@ -214,11 +221,47 @@ def follow(request, user_id):
     followed_user = User.objects.get(id=user_id)
     follower = request.user
     Follower.objects.create(follower=follower, followed=followed_user)
-    return redirect('user_detail', user_id=user_id)
+    return redirect('view')
+
 
 @login_required
 def unfollow(request, user_id):
     followed_user = User.objects.get(id=user_id)
     follower = request.user
     Follower.objects.filter(follower=follower, followed=followed_user).delete()
-    return redirect('user_detail', user_id=user_id)
+    return redirect('view')
+
+
+class VideoPlaylistListView(ListView):
+    model = Video
+    template_name = 'video_list.html'
+    context_object_name = 'videos'
+
+    def get_queryset(self):
+        # get the playlist object based on the playlist_id parameter in the URL
+        playlist_id = self.kwargs['playlist_id']
+        playlist = get_object_or_404(Playlist, id=playlist_id)
+        
+        # filter the videos that belong to the playlist
+        videos = playlist.videos.all().values_list('video__id', flat=True)
+        return Video.objects.filter(id__in=videos)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        playlist_id = self.kwargs['playlist_id']
+        context['playlist'] = get_object_or_404(Playlist, id=playlist_id)
+
+        comments = Comment.objects.order_by('-created_at')
+        context['comments'] = {}
+        for comment in comments:
+            video_id = comment.video.id
+            if video_id not in context['comments']:
+                context['comments'][video_id] = []
+            context['comments'][video_id].append(comment)
+
+        user = self.request.user
+        following_ids = Follower.objects.filter(follower=user).values_list('followed__id', flat=True)
+        context['following_ids'] = following_ids
+        context['inPlayList'] = False
+
+        return context

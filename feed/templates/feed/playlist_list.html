@@ -22,7 +22,8 @@
                                     <td>{{ playlist.title }}</td>
                                     <td>{{ playlist.videos.count }}</td>
                                     <td>
-                                        <a href="{% url 'playlist_list' %}" class="btn btn-primary btn-sm">View</a>
+                                        {{playlist.id}}
+                                        <a href="{% url 'video_playlist_list' playlist.id %}" class="btn btn-primary btn-sm">View</a>
                                     </td>
                                 </tr>
                                 {% empty %}

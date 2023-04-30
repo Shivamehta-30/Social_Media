@@ -18,4 +18,6 @@ urlpatterns = [
 
     path('list_playlist/', PlaylistListView.as_view(), name='playlist_list'),
     path('add_to_playlist/<int:pk>/', add_to_playlist, name='add_to_playlist'),
+     path('video_playlist_list/<int:playlist_id>/', VideoPlaylistListView.as_view(), name='video_playlist_list'),
+
 ]
