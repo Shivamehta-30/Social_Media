@@ -16,4 +16,6 @@ urlpatterns = [
     path('follow/<int:user_id>/', views.follow, name='follow'),
     path('unfollow/<int:user_id>/', views.unfollow, name='unfollow'),
 
+    path('list_playlist/', PlaylistListView.as_view(), name='playlist_list'),
+    path('add_to_playlist/<int:pk>/', add_to_playlist, name='add_to_playlist'),
 ]
