@@ -18,3 +18,17 @@ class Comment(models.Model):
 class Video_Likes(models.Model):
     VideoId = models.IntegerField()
     LikeByUserId = models.IntegerField()
+
+
+class Playlist(models.Model):
+    title = models.CharField(max_length=200)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='playlists')
+
+
+class PlaylistVideo(models.Model):
+    playlist = models.ForeignKey(
+        Playlist, on_delete=models.CASCADE, related_name='videos')
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
