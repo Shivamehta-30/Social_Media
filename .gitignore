@@ -1,6 +1,6 @@
 *.sqlite3
 */migrations/*
-__pycache__/
+__pycache__
 media/
 db.sqlite3/
 
