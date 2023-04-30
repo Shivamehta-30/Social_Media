@@ -203,3 +203,18 @@ def add_to_playlist(request, pk):
         return redirect('video_detail', pk=pk)
 
     return render(request, 'add_to_playlist.html', {'video': video, 'playlists': playlists})
+
+
+@login_required
+def follow(request, user_id):
+    followed_user = User.objects.get(id=user_id)
+    follower = request.user
+    Follower.objects.create(follower=follower, followed=followed_user)
+    return redirect('user_detail', user_id=user_id)
+
+@login_required
+def unfollow(request, user_id):
+    followed_user = User.objects.get(id=user_id)
+    follower = request.user
+    Follower.objects.filter(follower=follower, followed=followed_user).delete()
+    return redirect('user_detail', user_id=user_id)
