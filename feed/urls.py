@@ -10,5 +10,8 @@ urlpatterns = [
     path("delete/<int:pk>", VideoDeleteView.as_view(), name="delete"),
     path('add_comment/<int:pk>', views.add_comment, name='add_comment'),
     path('like_dislike_video/', like_dislike_video, name='like_dislike_video'),
+    path('add_comment/<int:pk>', views.add_comment, name='add_comment'),
+    path('playlist/<int:pk>/', PlaylistListView.as_view(), name='playlist_detail'),
+
 
 ]

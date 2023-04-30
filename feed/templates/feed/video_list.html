@@ -83,7 +83,9 @@
                             </video>
 
                             <p class="card-text">
-                                <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
+{#                                <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes#}
+                                <span class="like-button" data-video-id="{{ video.id }}">{{ video.likes }}</span> likes
+                                <span class="dislike-button" data-video-id="{{ video.id }}">{{ video.likes }}</span> Un-likes
                             </p>
 
                         <button class="like-button" data-video-id="{{ video.id }}">Like</button>

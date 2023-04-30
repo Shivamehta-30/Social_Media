@@ -167,3 +167,51 @@ def like_dislike_video(request):
 
     data = {'likes': video.likes}
     return JsonResponse(data)
+
+
+class PlaylistCreateView(LoginRequiredMixin, CreateView):
+    model = Playlist
+    template_name = 'playlist_form.html'
+    fields = ['name']
+    success_url = reverse_lazy('')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, 'Playlist created successfully!')
+        return super().form_valid(form)
+
+
+class PlaylistListView(LoginRequiredMixin, ListView):
+    model = Playlist
+    template_name = 'playlist_list.html'
+    context_object_name = 'playlists'
+
+    def get_queryset(self):
+        return Playlist.objects.filter(user=self.request.user)
+
+
+class PlaylistListView(LoginRequiredMixin, ListView):
+    model = Playlist
+    template_name = 'playlist_list.html'
+    context_object_name = 'playlists'
+
+    def get_queryset(self):
+        return Playlist.objects.filter(user=self.request.user)
+
+
+@login_required
+def add_to_playlist(request, pk):
+    video = get_object_or_404(Video, pk=pk)
+    playlists = Playlist.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        playlist_ids = request.POST.getlist('playlists')
+        playlists = Playlist.objects.filter(id__in=playlist_ids)
+
+        for playlist in playlists:
+            playlist.videos.add(video)
+
+        messages.success(request, 'Video added to playlist successfully!')
+        return redirect('video_detail', pk=pk)
+
+    return render(request, 'add_to_playlist.html', {'video': video, 'playlists': playlists})
