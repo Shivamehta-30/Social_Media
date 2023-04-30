@@ -12,5 +12,6 @@ urlpatterns = [
     path('like_dislike_video/', like_dislike_video, name='like_dislike_video'),
     path('add_comment/<int:pk>', views.add_comment, name='add_comment'),
     path('create_playlist/', PlaylistCreateView.as_view(), name='playlist_create'),
-
+    path('list_playlist/', PlaylistListView.as_view(), name='playlist_list'),
+    path('add_to_playlist/<int:pk>/', add_to_playlist, name='add_to_playlist'),
 ]

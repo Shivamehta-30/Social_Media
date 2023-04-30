@@ -168,9 +168,9 @@ def like_dislike_video(request):
 
 class PlaylistCreateView(LoginRequiredMixin, CreateView):
     model = Playlist
-    template_name = 'playlist_form.html'
+    template_name = 'feed/playlist_form.html'
     fields = ['title']
-    success_url = reverse_lazy('playlist_list')
+    success_url = reverse_lazy('view')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -180,16 +180,7 @@ class PlaylistCreateView(LoginRequiredMixin, CreateView):
 
 class PlaylistListView(LoginRequiredMixin, ListView):
     model = Playlist
-    template_name = 'playlist_list.html'
-    context_object_name = 'playlists'
-
-    def get_queryset(self):
-        return Playlist.objects.filter(user=self.request.user)
-
-
-class PlaylistListView(LoginRequiredMixin, ListView):
-    model = Playlist
-    template_name = 'playlist_list.html'
+    template_name = 'feed/playlist_list.html'
     context_object_name = 'playlists'
 
     def get_queryset(self):
