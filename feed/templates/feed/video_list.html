@@ -83,15 +83,11 @@
                             </video>
 
                             <p class="card-text">
-{#                                <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes#}
-                                <span class="like-button" data-video-id="{{ video.id }}">{{ video.likes }}</span> likes
-                                <span class="dislike-button" data-video-id="{{ video.id }}">{{ video.likes }}</span> Un-likes
+                                <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
+                                
                             </p>
 
-                        <button class="like-button" data-video-id="{{ video.id }}">Like</button>
-                        <button class="dislike-button" data-video-id="{{ video.id }}">Dislike</button>
-
-
+                
                             {% if video.videoDescription %}
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModal">
@@ -124,6 +120,12 @@
                                 <div class="btn-group">
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
                                         class="btn btn-sm btn-outline-secondary like-button">Like</button>
+                                    <button type="button" id="like-button" data-video-id="{{ video.id }}"
+                                        class="btn btn-sm btn-outline-secondary dislike-button">Dislike</button>
+
+
+                                    {% comment %} <button type="button" id="like-button" data-video-id="{{ video.id }}"
+                                        class="btn btn-sm btn-outline-secondary like-button">Like</button> {% endcomment %}
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
                                         data-target="#commentModal{{ video.id }}">Comment</button>
                                 </div>
@@ -188,7 +190,9 @@
     });
 
     function updateLikeDislike(videoId, isLiked) {
-      $.ajax({
+    var likeBtn = $('#like-count-' + videoId);
+
+    $.ajax({
         type: 'POST',
         url: '/like_dislike_video/',
         data: {
@@ -197,7 +201,9 @@
           'is_liked': isLiked
         },
         success: function(data) {
-          $('#likes-count').html(data.likes);
+            var button = $('#like-button');
+            var countSpan = $('#like-count-' + videoId);
+            countSpan.text(data.likes);
         },
         error: function(xhr, status, error) {
           alert('An error occurred while updating the like/dislike status.');
@@ -206,44 +212,6 @@
       });
     }
 </script>
-
-{#<script>#}
-{#    $(document).ready(function () {#}
-{#        $('.like-button').each(function () {#}
-{#            var videoId = $(this).data('video-id');#}
-{#            if (localStorage.getItem('liked_' + videoId) === 'true') {#}
-{#                $(this).prop('disabled', true);#}
-{#                $(this).removeClass('btn-outline-secondary').addClass('btn-danger');#}
-{#            }#}
-{#        });#}
-{##}
-{#        $('.like-button').click(function () {#}
-{#            var button = $(this);#}
-{#            var videoId = button.data('video-id');#}
-{#            $.ajax({#}
-{#                type: 'POST',#}
-{#                url: '{% url "like_video" %}',#}
-{#                data: {#}
-{#                    'csrfmiddlewaretoken': '{{ csrf_token }}',#}
-{#                    'video_id': videoId#}
-{#                },#}
-{#                success: function (data) {#}
-{#                    console.log(data.status)#}
-{#                    if (data.status == 'success') {#}
-{#                        button.toggleClass('btn-outline-secondary btn-danger');#}
-{#                        var countSpan = $('#like-count-' + videoId);#}
-{#                        countSpan.text(parseInt(countSpan.text()) + 1);#}
-{#                        button.prop('disabled', true);#}
-{#                        localStorage.setItem('liked_' + videoId, 'true');#}
-{#                    }#}
-{#                },#}
-{#                error: function (xhr, status, error) {#}
-{#                    console.error(xhr);#}
-{#                }#}
-{#            });#}
-{#        });#}
-{#    });#}
-{#</script>#}
 
 
 <script>
