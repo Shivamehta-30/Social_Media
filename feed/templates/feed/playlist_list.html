@@ -2,27 +2,44 @@
 
 {% block content %}
 <div class="container">
+    <h1 class="mt-5">My Playlists</h1>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ block.super }}</div>
                 <div class="card-body">
-                    <h4>Add to playlist :</h4>
-                    <form method="POST">
-                        {% csrf_token %}
-                        {% for playlist in playlists %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="playlists"
-                                id="playlist{{ playlist.id }}" value="{{ playlist.id }}">
-                            <label class="form-check-label" for="playlist{{ playlist.id }}">
-                                {{ playlist.title }}
-                            </label>
-                        </div>
-                        {% endfor %}
-                        <button type="submit" class="btn btn-primary">{{ "Add"|title }}</button>
-                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Videos</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for playlist in playlists %}
+                                <tr>
+                                    <td>{{ playlist.title }}</td>
+                                    <td>{{ playlist.videos.count }}</td>
+                                    <td>
+                                        <a href="{% url 'playlist_list' %}" class="btn btn-primary btn-sm">View</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">You don't have any playlists yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <a href="{% url 'playlist_create' %}" class="btn btn-primary">Create New Playlist</a>
         </div>
     </div>
 </div>
