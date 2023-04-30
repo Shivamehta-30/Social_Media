@@ -138,14 +138,11 @@ def add_comment(request, pk):
 @login_required
 @require_POST
 def like_dislike_video(request):
-    print(1)
     user_id = request.user.id
     video_id = request.POST.get('video_id')
     is_liked = request.POST.get('is_liked')
 
     video = get_object_or_404(Video, id=video_id)
-    a = True
-    b = True
     try:
         like_dislike = Video_Likes_dislikes.objects.get(video_id=video_id, Like_Dislike_ByUserId=user_id)
         a = False
@@ -171,9 +168,9 @@ def like_dislike_video(request):
 
 class PlaylistCreateView(LoginRequiredMixin, CreateView):
     model = Playlist
-    template_name = 'playlist_form.html'
-    fields = ['name']
-    success_url = reverse_lazy('')
+    template_name = 'feed/playlist_form.html'
+    fields = ['title']
+    success_url = reverse_lazy('playlist_list')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -183,7 +180,7 @@ class PlaylistCreateView(LoginRequiredMixin, CreateView):
 
 class PlaylistListView(LoginRequiredMixin, ListView):
     model = Playlist
-    template_name = 'playlist_list.html'
+    template_name = 'feed/playlist_list.html'
     context_object_name = 'playlists'
 
     def get_queryset(self):
@@ -215,3 +212,18 @@ def add_to_playlist(request, pk):
         return redirect('video_detail', pk=pk)
 
     return render(request, 'add_to_playlist.html', {'video': video, 'playlists': playlists})
+
+
+@login_required
+def follow(request, user_id):
+    followed_user = User.objects.get(id=user_id)
+    follower = request.user
+    Follower.objects.create(follower=follower, followed=followed_user)
+    return redirect('user_detail', user_id=user_id)
+
+@login_required
+def unfollow(request, user_id):
+    followed_user = User.objects.get(id=user_id)
+    follower = request.user
+    Follower.objects.filter(follower=follower, followed=followed_user).delete()
+    return redirect('user_detail', user_id=user_id)

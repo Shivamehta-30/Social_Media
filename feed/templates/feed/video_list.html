@@ -84,8 +84,29 @@
 
                             <p class="card-text">
                                 <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
-                                
                             </p>
+
+                            
+
+                            
+                            {% if request.user.is_authenticated %}
+                                {% if request.user != user %}
+                                    {% if user in request.user.following.all %}
+                                        <form method="POST" action="{% url 'unfollow' user.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Unfollow</button>
+                                        </form>
+                                    {% else %}
+                                        <form method="POST" action="{% url 'follow' user.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary">Follow</button>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-primary">Follow</a>
+                            {% endif %}
+
 
                 
                             {% if video.videoDescription %}
@@ -118,16 +139,15 @@
                             <p class="card-text">{{ video.comments.count }} comments</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
+                                    
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
                                         class="btn btn-sm btn-outline-secondary like-button">Like</button>
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
                                         class="btn btn-sm btn-outline-secondary dislike-button">Dislike</button>
 
-
-                                    {% comment %} <button type="button" id="like-button" data-video-id="{{ video.id }}"
-                                        class="btn btn-sm btn-outline-secondary like-button">Like</button> {% endcomment %}
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
                                         data-target="#commentModal{{ video.id }}">Comment</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Add to Playlist</button>
                                 </div>
                             </div>
                         </div>

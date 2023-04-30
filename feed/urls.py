@@ -12,6 +12,8 @@ urlpatterns = [
     path('like_dislike_video/', like_dislike_video, name='like_dislike_video'),
     path('add_comment/<int:pk>', views.add_comment, name='add_comment'),
     path('playlist/', PlaylistListView.as_view(), name='playlist_detail'),
-
+    path('create_playlist/', PlaylistCreateView.as_view(), name='playlist_create'),
+    path('follow/<int:user_id>/', views.follow, name='follow'),
+    path('unfollow/<int:user_id>/', views.unfollow, name='unfollow'),
 
 ]
