@@ -197,10 +197,14 @@ def add_to_playlist(request, pk):
         playlists = Playlist.objects.filter(id__in=playlist_ids)
 
         for playlist in playlists:
-            playlist.videos.add(video)
+            PlaylistVideo.objects.create(
+                playlist=playlist,
+                video=video,
+                added_by=request.user
+            )
 
         messages.success(request, 'Video added to playlist successfully!')
-        return redirect('video_detail', pk=pk)
+        return redirect('view')
 
     return render(request, 'feed/add_to_playlist.html', {'video': video, 'playlists': playlists})
 
@@ -218,17 +222,3 @@ def unfollow(request, user_id):
     follower = request.user
     Follower.objects.filter(follower=follower, followed=followed_user).delete()
     return redirect('user_detail', user_id=user_id)
-
-@login_required
-def add_to_playlist_popup(request, video_id):
-    video = get_object_or_404(Video, id=video_id)
-    playlists = Playlist.objects.filter(user=request.user)
-    context = {'video': video, 'playlists': playlists}
-    return render(request, 'add_to_playlist_popup.html', context)
-
-@login_required
-def add_video_to_playlist(request, playlist_id, video_id):
-    playlist = get_object_or_404(Playlist, id=playlist_id)
-    video = get_object_or_404(Video, id=video_id)
-    playlist.videos.add(video)
-    return JsonResponse({'status': 'success'})
