@@ -6,6 +6,9 @@ from django.urls import reverse_lazy
 from .models import *
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 
 class VideoListView(LoginRequiredMixin, ListView):
@@ -130,3 +133,37 @@ def add_comment(request, pk):
         return redirect('/')
     else:
         return redirect('home')
+
+
+@login_required
+@require_POST
+def like_dislike_video(request):
+    print(1)
+    user_id = request.user.id
+    video_id = request.POST.get('video_id')
+    is_liked = request.POST.get('is_liked')
+
+    video = get_object_or_404(Video, id=video_id)
+    a = True
+    b = True
+    try:
+        like_dislike = Video_Likes_dislikes.objects.get(video_id=video_id, Like_Dislike_ByUserId=user_id)
+        a = False
+    except Video_Likes_dislikes.DoesNotExist:
+        like_dislike = Video_Likes_dislikes(video_id_id=video_id, Like_Dislike_ByUserId=user_id)
+
+    if is_liked == 'true':
+        if not like_dislike.VideoIsLiked == True:
+            video.likes += 1
+        like_dislike.VideoIsLiked = True
+
+    else:
+        if not like_dislike.VideoIsLiked == False:
+            video.likes -= 1
+        like_dislike.VideoIsLiked = False
+
+    like_dislike.save()
+    video.save()
+
+    data = {'likes': video.likes}
+    return JsonResponse(data)

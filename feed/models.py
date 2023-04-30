@@ -15,6 +15,7 @@ class Comment(models.Model):
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-class Video_Likes(models.Model):
-    VideoId = models.IntegerField()
-    LikeByUserId = models.IntegerField()
+class Video_Likes_dislikes(models.Model):
+    video_id = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='likes_dislikes')
+    Like_Dislike_ByUserId = models.IntegerField()
+    VideoIsLiked = models.BooleanField()
