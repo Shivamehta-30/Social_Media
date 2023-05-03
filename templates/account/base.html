@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html>
 
@@ -47,6 +48,7 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
+      <img src="{% static '/social/static/images/logo.png' %}" width="30" height="30" class="d-inline-block align-text-top">
       <a class="navbar-brand" href="{% url 'view' %}">Video Sharing Application</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

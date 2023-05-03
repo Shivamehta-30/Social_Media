@@ -53,34 +53,41 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-        function validatePassword() {
-            var password = document.getElementById("password").value;
-            var lowercaseRegex = /[a-z]/;
-            var uppercaseRegex = /[A-Z]/;
-            var numberRegex = /[0-9]/;
+    function validatePassword() {
+        var password = document.getElementById("password").value;
+        var lowercaseRegex = /[a-z]/;
+        var uppercaseRegex = /[A-Z]/;
+        var numberRegex = /[0-9]/;
+        var specialRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
 
-            if (password.length < 8) {
-                alert("Password must be at least 8 characters long.");
-                return false;
-            }
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long.");
+            return false;
+        }
 
-            if (!lowercaseRegex.test(password)) {
-                alert("Password must contain at least one lowercase letter.");
-                return false;
-            }
+        if (!lowercaseRegex.test(password)) {
+            alert("Password must contain at least one lowercase letter.");
+            return false;
+        }
 
-            if (!uppercaseRegex.test(password)) {
-                alert("Password must contain at least one uppercase letter.");
-                return false;
-            }
+        if (!uppercaseRegex.test(password)) {
+            alert("Password must contain at least one uppercase letter.");
+            return false;
+        }
 
-            if (!numberRegex.test(password)) {
-                alert("Password must contain at least one number.");
-                return false;
-            }
+        if (!numberRegex.test(password)) {
+            alert("Password must contain at least one number.");
+            return false;
+        }
+
+        if (!specialRegex.test(password)) {
+            alert("Password must contain at least one special character.");
+            return false;
+        }
 
         return true;
     }
+
 </script>
 
 {% endblock %}
@@ -99,10 +106,10 @@
                         <div class="form-group d-grid mt-3">
                             <button class="btn btn-dark" type="submit">{% trans "Sign Up" %}</button>
                         </div>
-                        </form>
+                    </form>
                 </div>
-                </div>
-                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

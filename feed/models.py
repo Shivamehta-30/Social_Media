@@ -9,6 +9,9 @@ class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos_uploaded')
     comments = models.ManyToManyField(User, through='Comment', related_name='videos_commented')
 
+    def __str__(self):
+        return self.title
+
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
