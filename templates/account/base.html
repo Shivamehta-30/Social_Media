@@ -21,6 +21,15 @@
       margin-top: 10px;
     }
   </style>
+  <style>
+    body {
+      background-image: url('https://images.pexels.com/photos/7130555/pexels-photo-7130555.jpeg?cs=srgb&dl=pexels-codioful-%28formerly-gradienta%29-7130555.jpg&fm=jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+  </style>
+
   {% block extra_head %}
   {% endblock %}
   </head>
@@ -46,6 +55,9 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'followers_feed' %}">Followers Feed</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'account_email' %}">Change E-mail</a>
           </li>

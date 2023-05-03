@@ -1,0 +1,268 @@
+{% extends 'account/base.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <style>
+        .comments-section {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .comment {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .meta {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .video-container {
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        #searchInput {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+            outline: none;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        #searchBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #searchBtn:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<br>
+<div class="d-flex justify-content-end">
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button type="button" id="searchBtn">Search</button>
+</div>
+
+<br>
+<div class="container" style="height: 100vh">
+    <div class="row">
+        {% for video in videos %}
+            {% if video.user_id in following_ids %}
+                <div class="col-md-12 mb-4">
+                    <div class="card box-shadow" style="border-radius: 20px;" style="background-image: url('https://images.pexels.com/photos/7130469/pexels-photo-7130469.jpeg?cs=srgb&dl=pexels-codioful-%28formerly-gradienta%29-7130469.jpg&fm=jpg')">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-4 mb-md-0">
+                                    <h5 class="card-title">{{ video.title }}</h5>
+                                    <p class="card-text">{{ video.user.username }}</p>
+                                    <video width="100%" controls>
+                                        <source src="{{ video.video.url }}" type="video/mp4">
+                                        Your browser does not support HTML5 video.
+                                    </video>
+
+                                    <p class="card-text">
+                                        <span id="like-count-{{ video.id }}">{{ video.likes }}</span> likes
+                                    </p>
+
+                                    <div>
+                                        {% if inPlayList %}
+                                            {% if video.user_id in following_ids %}
+                                                <form method="POST" action="{% url 'unfollow' video.user_id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Unfollow</button>
+                                                </form>
+                                            {% else %}
+                                                <form method="POST" action="{% url 'follow' video.user_id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-primary">Follow</button>
+                                                </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                        
+                                    {% if video.videoDescription %}
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModal">
+                                        Show Description
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Description</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ video.videoDescription }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    {% endif %}
+
+                                    <p class="card-text">{{ video.comments.count }} comments</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            
+                                            <button type="button" id="like-button" data-video-id="{{ video.id }}"
+                                                class="btn btn-sm btn-outline-secondary like-button">Like</button>
+                                            <button type="button" id="like-button" data-video-id="{{ video.id }}"
+                                                class="btn btn-sm btn-outline-secondary dislike-button">Dislike</button>
+
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+                                                data-target="#commentModal{{ video.id }}">Comment</button>
+                                                <a class="btn btn-sm btn-outline-secondary" href="{% url 'add_to_playlist' pk=video.pk %}">Add to Playlist</a>
+                                                <a class="btn btn-sm btn-outline-secondary" href="{% url 'playlist_list' %}">View Playlist</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog"
+                                        aria-labelledby="commentModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lm" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="commentModalLabel">Write a Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form method="POST" action="{% url 'add_comment' pk=video.id %}">
+                                                    {% for comment in comments|get_item:video.id %}
+                                                    <div class="comment">
+                                                        <p>{{ comment.comment }}</p>
+                                                        <p class="meta">Posted by {{ comment.user.username }}</p>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="comment">Comment:</label>
+                                                            <textarea class="form-control" id="comment{{ video.id }}"
+                                                                name="comment" rows="3"></textarea>
+                                                        </div>
+                                                        <input type="hidden" id="video-id" name="video-id"
+                                                            value="{{ video.id }}">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('.like-button').click(function() {
+      var videoId = $(this).data('video-id');
+      updateLikeDislike(videoId, true);
+    });
+
+    $('.dislike-button').click(function() {
+      var videoId = $(this).data('video-id');
+      updateLikeDislike(videoId, false);
+    });
+
+    function updateLikeDislike(videoId, isLiked) {
+    var likeBtn = $('#like-count-' + videoId);
+
+    $.ajax({
+        type: 'POST',
+        url: '/like_dislike_video/',
+        data: {
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+          'video_id': videoId,
+          'is_liked': isLiked
+        },
+        success: function(data) {
+            var button = $('#like-button');
+            var countSpan = $('#like-count-' + videoId);
+            countSpan.text(data.likes);
+        },
+        error: function(xhr, status, error) {
+          alert('An error occurred while updating the like/dislike status.');
+          console.log(xhr.responseText);
+        }
+      });
+    }
+</script>
+
+
+<script>
+    $('[data-toggle="popover"]').popover({
+        container: 'body',
+        html: true,
+        trigger: 'click'
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // code for checking if video is already liked goes here
+
+        // handle search button click event
+        $('#searchBtn').click(function () {
+            var searchKeyword = $('#searchInput').val().toLowerCase();
+            $('.card').each(function () {
+                var title = $(this).find('.card-title').text().toLowerCase();
+                if (title.indexOf(searchKeyword) !== -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // handle search input keypress event
+        $('#searchInput').keypress(function (e) {
+            if (e.which == 13) { // enter key pressed
+                $('#searchBtn').click();
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}

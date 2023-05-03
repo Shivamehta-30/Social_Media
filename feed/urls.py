@@ -13,6 +13,7 @@ urlpatterns = [
     path('add_comment/<int:pk>', views.add_comment, name='add_comment'),
     path('playlist/', PlaylistListView.as_view(), name='playlist_detail'),
     path('create_playlist/', PlaylistCreateView.as_view(), name='playlist_create'),
+    path('followers_feed/', VideoByFollowedUsers.as_view(), name='followers_feed'),
     path('follow/<int:user_id>/', views.follow, name='follow'),
     path('unfollow/<int:user_id>/', views.unfollow, name='unfollow'),
 

@@ -9,12 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.db.models import Count
-
-
-
-class VideoListView(LoginRequiredMixin, ListView):
-    DetailView
+from django.db.models import Q
 
 
 class VideoListView(LoginRequiredMixin, ListView):
@@ -265,3 +260,31 @@ class VideoPlaylistListView(ListView):
         context['inPlayList'] = False
 
         return context
+
+
+
+class VideoByFollowedUsers(ListView):
+    model = Video
+    template_name = 'feed\FollowersVideoList.html'
+    context_object_name = 'videos'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        comments = Comment.objects.order_by('-created_at')
+        context['comments'] = {}
+        for comment in comments:
+            video_id = comment.video.id
+            if video_id not in context['comments']:
+                context['comments'][video_id] = []
+            context['comments'][video_id].append(comment)
+
+        # get follower data
+        user = self.request.user
+        following_ids = Follower.objects.filter(follower=user).values_list('followed__id', flat=True)
+        context['following_ids'] = following_ids
+        context['inPlayList'] = True
+        return context
+
+@login_required
+def aaa(request):
+    return redirect('view')

@@ -1,11 +1,16 @@
 {% extends 'account/base.html' %}
 
 {% block content %}
+<style>
+.card {
+    border-radius: 10px;
+    }
+</style>
 <div class="container">
     <h1 class="mt-5">My Playlists</h1>
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card" style="border-radius: 20px;">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -22,7 +27,6 @@
                                     <td>{{ playlist.title }}</td>
                                     <td>{{ playlist.videos.count }}</td>
                                     <td>
-                                        {{playlist.id}}
                                         <a href="{% url 'video_playlist_list' playlist.id %}" class="btn btn-primary btn-sm">View</a>
                                     </td>
                                 </tr>
