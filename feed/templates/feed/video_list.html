@@ -141,9 +141,9 @@
                                 <div class="btn-group">
 
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
-                                        class="btn btn-sm btn-outline-secondary like-button">Like</button>
+                                        class="btn btn-sm btn-outline-primary like-button"> <i class="fa fa-thumbs-up"></i>Like</button>
                                     <button type="button" id="like-button" data-video-id="{{ video.id }}"
-                                        class="btn btn-sm btn-outline-secondary dislike-button">Dislike</button>
+                                        class="btn btn-sm btn-outline-danger dislike-button"> <i class="fa fa-thumbs-down"></i>Dislike</button>
 
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
                                         data-target="#commentModal{{ video.id }}">Comment</button>
@@ -162,7 +162,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="modal fade" id="commentModal{{ video.id }}" tabindex="-1" role="dialog"
-                                aria-labelledby="commentModalLabel" aria-hidden="true">
+                                aria-labelledby="commentModalLabel" aria-hidden="true"> 
                                 <div class="modal-dialog modal-lm" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">

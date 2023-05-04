@@ -133,16 +133,21 @@
                                     <p class="card-text">{{ video.comments.count }} comments</p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
-                                            
+                                        
                                             <button type="button" id="like-button" data-video-id="{{ video.id }}"
-                                                class="btn btn-sm btn-outline-secondary like-button">Like</button>
+                                                class="btn btn-sm btn-outline-primary like-button"> <i class="fa fa-thumbs-up"></i>Like</button>
                                             <button type="button" id="like-button" data-video-id="{{ video.id }}"
-                                                class="btn btn-sm btn-outline-secondary dislike-button">Dislike</button>
-
+                                                class="btn btn-sm btn-outline-danger dislike-button"> <i class="fa fa-thumbs-down"></i>Dislike</button>
+                                        
                                             <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
                                                 data-target="#commentModal{{ video.id }}">Comment</button>
-                                                <a class="btn btn-sm btn-outline-secondary" href="{% url 'add_to_playlist' pk=video.pk %}">Add to Playlist</a>
-                                                <a class="btn btn-sm btn-outline-secondary" href="{% url 'playlist_list' %}">View Playlist</a>
+                                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'add_to_playlist' pk=video.pk %}">Add to Playlist</a>
+                                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'playlist_list' %}">View
+                                                Playlist</a>
+                                            <a class="btn btn-sm btn-outline-secondary" onclick="shareonFB()"><i class="fab fa-facebook"></i> Share on
+                                                Facebook</a>
+                                            <a class="btn btn-sm btn-outline-secondary" onclick="shareonIG()"><i class="fab fa-instagram"></i> Share on
+                                                Instagram</a>
                                         </div>
                                     </div>
                                 </div>
@@ -263,6 +268,18 @@
         });
     });
 
+    function shareonFB() {
+            const playlistUrl = window.location.href;
+            const shareUrlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(playlistUrl)}`;
+            window.open(shareUrlFacebook, '_blank');
+
+        }
+
+        function shareonIG() {
+            const playlistUrl = window.location.href;
+            const shareUrlInstagram = `https://www.instagram.com/share?url=${encodeURIComponent(playlistUrl)}`;
+            window.open(shareUrlInstagram, '_blank');
+        }
 </script>
 
 {% endblock %}
